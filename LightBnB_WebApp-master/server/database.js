@@ -102,8 +102,51 @@ exports.addUser = addUser;
  *  param {string} guest_id The id of the user.
  *  return {Promise<[{}]>} A promise to the reservations.
  */
+
+//  {
+//   id: 1,
+//   owner_id: 1,
+//   title: 'Speed lamp',
+//   description: 'description',
+//   thumbnail_photo_url: 'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg?auto=compress&cs=tinysrgb&h=350',
+//   cover_photo_url: 'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg',
+//   cost_per_night: 93061,
+//   parking_spaces: 6,
+//   number_of_bathrooms: 4,
+//   number_of_bedrooms: 8,
+//   country: 'Canada',
+//   street: '536 Namsub Highway',
+//   city: 'Sotboske',
+//   province: 'Quebec',
+//   post_code: '28142',
+//   active: true
+// }
+
 const getAllReservations = function(guestID, limit = 10) {
-  return getAllProperties(null, 2);
+  const query = {
+    name: 'reservations-by-id',
+    text: `SELECT p.*
+             FROM reservations AS r
+             JOIN properties AS p ON r.property_id = p.id
+             JOIN property_reviews AS pr ON pr.property_id = p.id
+            WHERE r.guest_id = $1
+            GROUP BY p.id, r.id
+            ORDER BY r.start_date
+            LIMIT $2;`,
+    values: [guestID, limit],
+  };
+  
+  return pool
+    .query(query)
+    .then(res => {
+      console.log(res.rows);
+      return res.rows
+        ? res.rows
+        : null;
+    })
+    .catch(err => console.error('query error', err.stack));
+  
+  // return getAllProperties(null, 2);
 };
 exports.getAllReservations = getAllReservations;
 
@@ -125,6 +168,7 @@ const getAllProperties = (options, limit = 10) => {
   return pool
     .query(query)
     .then(res => {
+      // console.log(res.rows);
       return res.rows;
     })
     .catch(err => console.error('query error', err.stack));
