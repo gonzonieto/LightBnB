@@ -1,6 +1,6 @@
-const database = require('./database');
-const apiRoutes = require('./apiRoutes');
-const userRoutes = require('./userRoutes');
+const database = require('./database.js');
+const apiRoutes = require('./apiRoutes.js');
+const userRoutes = require('./userRoutes.js');
 
 const path = require('path');
 
@@ -34,5 +34,5 @@ app.get("/test", (req, res) => {
   res.send("🤗");
 });
 
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT || 3000;
 app.listen(port, (err) => console.log(err || `listening on port ${port} 😎`));
